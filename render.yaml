@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: inksmart
+    env: python
+    buildCommand: ""
+    startCommand: uvicorn signature_bg_remover:app --host 0.0.0.0 --port $PORT
+    plan: free

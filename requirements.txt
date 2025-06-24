@@ -2,6 +2,5 @@ fastapi
 uvicorn
 opencv-python
 numpy
-easyocr
 python-multipart
 setuptools

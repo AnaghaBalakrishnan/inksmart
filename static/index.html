@@ -70,16 +70,6 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <div class="form-check mb-1">
-                                    <input class="form-check-input" type="checkbox" id="extract-text-check">
-                                    <label class="form-check-label" for="extract-text-check">
-                                        <i class="fas fa-font me-2"></i>Extract text from signature 
-                                    </label>
-                                </div>
-                                <div class="handwriting-warning mb-3">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    <span>Handwriting recognition accuracy may vary, especially for cursive or stylized writing. So please keep simple handwriting for high accuracy!</span>
-                                </div>
                                 <button type="submit" class="btn btn-primary btn-lg btn-gradient" id="process-btn">
                                     <span class="btn-text">
                                         <i class="fas fa-magic me-2"></i>Remove Background
@@ -125,29 +115,6 @@
                             <button type="button" class="btn btn-outline-primary" id="process-another">
                                 <i class="fas fa-plus me-2"></i>Process Another
                             </button>
-                        </div>
-                    </div>
-
-                    <!-- Text Extraction Result Section -->
-                    <div id="text-result-section" class="text-result-section mt-4 d-none">
-                        <div class="section-divider mb-4">
-                            <span class="divider-text">Extracted Text</span>
-                        </div>
-                        
-                        <div class="text-result-container">
-                            <div class="text-content">
-                                <p id="extracted-text" class="extracted-text mb-3"></p>
-                                <div class="text-meta">
-                                    <span class="confidence-badge" id="confidence-badge">
-                                        <i class="fas fa-shield-alt me-1"></i>Confidence: <span id="confidence-score">0%</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="text-actions">
-                                <button type="button" class="btn btn-outline-success btn-sm" id="copy-text-btn">
-                                    <i class="fas fa-copy me-2"></i>Copy Text
-                                </button>
-                            </div>
                         </div>
                     </div>
 

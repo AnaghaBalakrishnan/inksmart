@@ -18,13 +18,6 @@ const errorSection = document.getElementById('error-section');
 const errorMessage = document.getElementById('error-message');
 const processAnother = document.getElementById('process-another');
 
-// Text extraction elements
-const extractTextCheck = document.getElementById('extract-text-check');
-const textResultSection = document.getElementById('text-result-section');
-const extractedText = document.getElementById('extracted-text');
-const confidenceScore = document.getElementById('confidence-score');
-const copyTextBtn = document.getElementById('copy-text-btn');
-
 // Initialize particles animation
 function initParticles() {
     const particlesContainer = document.getElementById('particles');
@@ -92,7 +85,6 @@ function showPreview(file) {
         uploadArea.style.display = 'none';
         hideError();
         hideResult();
-        hideTextResult();
     };
     reader.readAsDataURL(file);
 }
@@ -128,25 +120,6 @@ function hideResult() {
     resultImg.src = '#';
     downloadBtn.href = '#';
     downloadBtn.classList.add('d-none');
-}
-
-function showTextResult(textData) {
-    console.log('Showing text result:', textData);
-    if (textData.success && textData.text.trim()) {
-        extractedText.textContent = textData.text;
-        confidenceScore.textContent = Math.round(textData.total_confidence * 100) + '%';
-        textResultSection.classList.remove('d-none');
-        console.log('Text result displayed successfully');
-    } else {
-        console.log('No text found or extraction failed');
-        hideTextResult();
-    }
-}
-
-function hideTextResult() {
-    textResultSection.classList.add('d-none');
-    extractedText.textContent = '';
-    confidenceScore.textContent = '0%';
 }
 
 function showError(msg) {
@@ -218,8 +191,6 @@ function processAnotherImage() {
     hideResult();
     hidePreview();
     hideError();
-    hideTextResult();
-    extractTextCheck.checked = false;
 }
 
 // Form Submission
@@ -254,16 +225,6 @@ uploadForm.addEventListener('submit', async function(e) {
         showResult(originalImageSrc, blob);
         console.log('Background removal completed');
         
-        // If text extraction is enabled, extract text from the processed image
-        if (extractTextCheck.checked) {
-            console.log('Text extraction is enabled, starting extraction...');
-            const textResult = await extractTextFromImage(blob);
-            showTextResult(textResult);
-        } else {
-            console.log('Text extraction is disabled');
-            hideTextResult();
-        }
-        
     } catch (err) {
         console.error('Processing error:', err);
         showError(err.message || 'An error occurred.');
@@ -280,59 +241,6 @@ uploadArea.addEventListener('drop', handleDrop);
 fileInput.addEventListener('change', handleFileInputChange);
 removePreview.addEventListener('click', removePreviewImage);
 processAnother.addEventListener('click', processAnotherImage);
-copyTextBtn.addEventListener('click', copyTextToClipboard);
 
 // Initialize
 initParticles();
-
-// Text extraction functionality
-async function extractTextFromImage(imageBlob) {
-    try {
-        console.log('Starting text extraction...');
-        const formData = new FormData();
-        formData.append('file', imageBlob);
-        
-        const response = await fetch('/extract-text/', {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (!response.ok) throw new Error('Failed to extract text.');
-        
-        const result = await response.json();
-        console.log('Text extraction result:', result);
-        return result;
-    } catch (err) {
-        console.error('Text extraction error:', err);
-        return {
-            success: false,
-            error: err.message,
-            text: '',
-            words: [],
-            total_confidence: 0.0
-        };
-    }
-}
-
-// Copy text to clipboard
-async function copyTextToClipboard() {
-    const text = extractedText.textContent;
-    if (!text) return;
-    
-    try {
-        await navigator.clipboard.writeText(text);
-        
-        // Show success feedback
-        const originalText = copyTextBtn.innerHTML;
-        copyTextBtn.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
-        copyTextBtn.style.background = 'var(--success-gradient)';
-        
-        setTimeout(() => {
-            copyTextBtn.innerHTML = originalText;
-            copyTextBtn.style.background = '';
-        }, 2000);
-    } catch (err) {
-        console.error('Failed to copy text:', err);
-        showError('Failed to copy text to clipboard');
-    }
-}

@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
 import os
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Request
 from io import BytesIO
 from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from paddleocr import PaddleOCR
+import easyocr
 
 app = FastAPI()
 
@@ -22,8 +22,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize PaddleOCR model (English, use_angle_cls for better handwriting)
-ocr_model = PaddleOCR(use_angle_cls=True, lang='en')
+# Initialize EasyOCR reader (only once for better performance)
+reader = easyocr.Reader(['en'])
+
+print("Current working directory:", os.getcwd())
+print("Files in CWD:", os.listdir())
 
 def process_signature(image: np.ndarray) -> np.ndarray:
     # Convert to HSV for better segmentation
@@ -64,7 +67,7 @@ def process_signature(image: np.ndarray) -> np.ndarray:
     return result
 
 def extract_text_from_image(image: np.ndarray) -> dict:
-    """Extract text from image using PaddleOCR"""
+    """Extract text from image using EasyOCR"""
     try:
         # Always convert to 3-channel BGR if image has alpha
         if len(image.shape) == 3 and image.shape[2] == 4:
@@ -74,17 +77,14 @@ def extract_text_from_image(image: np.ndarray) -> dict:
         else:
             image_rgb = image
 
-        # PaddleOCR expects file path or numpy array (RGB)
-        results = ocr_model.ocr(image_rgb, cls=True)
+        # Perform OCR
+        results = reader.readtext(image_rgb)
         extracted_text = []
-        for line in results[0]:
-            text = line[1][0]
-            confidence = float(line[1][1])
-            bbox = [[float(x) for x in point] for point in line[0]]
+        for (bbox, text, confidence) in results:
             extracted_text.append({
                 "text": text,
-                "confidence": confidence,
-                "bbox": bbox
+                "confidence": float(confidence),
+                "bbox": [[float(x) for x in point] for point in bbox]
             })
         extracted_text.sort(key=lambda x: x["confidence"], reverse=True)
         all_text = " ".join([item["text"] for item in extracted_text])
@@ -96,7 +96,7 @@ def extract_text_from_image(image: np.ndarray) -> dict:
         }
     except Exception as e:
         import traceback
-        print("EXTRACT TEXT ERROR (PaddleOCR):", e)
+        print("EXTRACT TEXT ERROR (EasyOCR):", e)
         traceback.print_exc()
         return {
             "success": False,
@@ -153,7 +153,8 @@ async def extract_text(file: UploadFile = File(...)):
 
 # Serve the frontend
 @app.get("/")
-def read_index():
-    return FileResponse("static/index.html")  # InkSmart branding
+def read_index(request: Request):
+    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+    return FileResponse(os.path.join(static_dir, "index.html"))
 
 # Example usage: Run with `uvicorn signature_bg_remover:app --reload`

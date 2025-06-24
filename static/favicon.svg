@@ -1,0 +1,21 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sc-gradient" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#667eea"/>
+      <stop offset="1" stop-color="#764ba2"/>
+    </linearGradient>
+    <radialGradient id="sc-glow" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#764ba2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Pen tip -->
+  <path d="M44 20L24 40L20 44L24 40L44 20Z" fill="url(#sc-gradient)" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Pen body -->
+  <rect x="38" y="14" width="8" height="20" rx="4" transform="rotate(45 38 14)" fill="url(#sc-gradient)" stroke="#fff" stroke-width="2"/>
+  <!-- Signature stroke -->
+  <path d="M18 46 Q28 54, 46 38" stroke="url(#sc-gradient)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Magic sparkle -->
+  <circle cx="50" cy="14" r="3" fill="url(#sc-glow)"/>
+  <path d="M50 10V18M46 14H54" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+</svg> 

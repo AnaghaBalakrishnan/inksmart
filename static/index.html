@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InkSmart – Background Remover & Text Extractor</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<!-- Animated background particles -->
+<div id="particles"></div>
+
+<header class="signaclear-header py-5 mb-5 position-relative overflow-hidden">
+    <div class="header-glow"></div>
+    <div class="container text-center position-relative">
+        <div class="logo-container mb-3">
+            <img src="/static/favicon.svg" alt="InkSmart Logo" class="signaclear-logo">
+            <div class="logo-ring"></div>
+        </div>
+        <h1 class="display-4 fw-bold mb-2 text-glow">InkSmart</h1>
+        <p class="lead mb-0 opacity-90">Background Remover & Text Extractor</p>
+        <div class="header-features mt-4">
+            <span class="feature-badge"><i class="fas fa-bolt"></i> Lightning Fast</span>
+            <span class="feature-badge"><i class="fas fa-shield-alt"></i> Secure</span>
+            <span class="feature-badge"><i class="fas fa-magic"></i> AI-Powered</span>
+        </div>
+    </div>
+</header>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="main-card shadow-premium border-0">
+                <div class="card-body p-5">
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <form id="upload-form">
+                            <div class="mb-4">
+                                <label for="file-input" class="form-label fs-5 fw-semibold mb-3">
+                                    <i class="fas fa-cloud-upload-alt me-2"></i>Upload Your Signature
+                                </label>
+                                <div class="upload-area" id="upload-area">
+                                    <input class="d-none" type="file" id="file-input" accept="image/*" required>
+                                    <div class="upload-content">
+                                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                        <h6 class="fw-semibold mb-2">Drag & drop or click to select</h6>
+                                        <p class="text-muted small mb-0">PNG, JPG, JPEG up to 10MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Preview Section -->
+                            <div class="preview-section mb-4 d-none" id="preview-section">
+                                <div class="preview-container">
+                                    <img id="preview" src="#" alt="Preview" class="preview-image"/>
+                                    <button type="button" class="btn-remove-preview" id="remove-preview">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="file-info mt-2">
+                                    <span class="file-name" id="file-name"></span>
+                                    <span class="file-size text-muted" id="file-size"></span>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="checkbox" id="extract-text-check">
+                                    <label class="form-check-label" for="extract-text-check">
+                                        <i class="fas fa-font me-2"></i>Extract text from signature 
+                                    </label>
+                                </div>
+                                <div class="handwriting-warning mb-3">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    <span>Handwriting recognition accuracy may vary, especially for cursive or stylized writing. So please keep simple handwriting for high accuracy!</span>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg btn-gradient" id="process-btn">
+                                    <span class="btn-text">
+                                        <i class="fas fa-magic me-2"></i>Remove Background
+                                    </span>
+                                    <div class="btn-loader d-none">
+                                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                        Processing...
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Result Section -->
+                    <div id="result-section" class="result-section mt-5 d-none">
+                        <div class="section-divider mb-4">
+                            <span class="divider-text">Result</span>
+                        </div>
+                        
+                        <div class="result-comparison">
+                            <div class="comparison-item">
+                                <h6 class="comparison-label">Before</h6>
+                                <div class="comparison-image-container">
+                                    <img id="before-img" src="#" alt="Before" class="comparison-image"/>
+                                </div>
+                            </div>
+                            <div class="comparison-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            <div class="comparison-item">
+                                <h6 class="comparison-label">After</h6>
+                                <div class="comparison-image-container">
+                                    <img id="result-img" src="#" alt="Result" class="comparison-image"/>
+                                    <div class="transparency-pattern"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-actions mt-4">
+                            <a id="download-btn" class="btn btn-success btn-gradient me-2" href="#" download="signature_no_bg.png">
+                                <i class="fas fa-download me-2"></i>Download PNG
+                            </a>
+                            <button type="button" class="btn btn-outline-primary" id="process-another">
+                                <i class="fas fa-plus me-2"></i>Process Another
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Text Extraction Result Section -->
+                    <div id="text-result-section" class="text-result-section mt-4 d-none">
+                        <div class="section-divider mb-4">
+                            <span class="divider-text">Extracted Text</span>
+                        </div>
+                        
+                        <div class="text-result-container">
+                            <div class="text-content">
+                                <p id="extracted-text" class="extracted-text mb-3"></p>
+                                <div class="text-meta">
+                                    <span class="confidence-badge" id="confidence-badge">
+                                        <i class="fas fa-shield-alt me-1"></i>Confidence: <span id="confidence-score">0%</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-actions">
+                                <button type="button" class="btn btn-outline-success btn-sm" id="copy-text-btn">
+                                    <i class="fas fa-copy me-2"></i>Copy Text
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Section -->
+                    <div id="error-section" class="error-section mt-4 d-none">
+                        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span id="error-message"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="features-grid mt-5">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-1">AI-Powered</h6>
+                    <p class="text-muted small mb-0">Advanced machine learning algorithms</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-1">100% Secure</h6>
+                    <p class="text-muted small mb-0">Your images are processed securely</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-1">Instant Download</h6>
+                    <p class="text-muted small mb-0">Get your processed image immediately</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer mt-5 py-4 text-center">
+    <div class="container">
+        <div class="footer-content">
+            <p class="mb-0 text-muted">&copy; 2024 InkSmart. Made with <i class="fas fa-heart text-danger"></i> for perfect handwriting and signatures.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

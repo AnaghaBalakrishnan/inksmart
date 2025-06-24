@@ -5,3 +5,4 @@ numpy
 paddleocr
 paddlepaddle
 python-multipart
+setuptools
